@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>React Theme Context via CDN</title>
+  <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+  <style>
+    body { font-family: sans-serif; padding: 20px; margin: 0; }
+    .box { padding: 30px; color: #fff; margin-top: 20px; border-radius: 10px; }
+    .light { background-color: #ddd; color: #000; }
+    .dark { background-color: #222; color: #fff; }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+
+  <script type="text/javascript">
+    const { useState, createContext, useContext } = React;
+
+    // Create Theme Context
+    const ThemeContext = createContext();
+
+    // Theme Provider
+    function ThemeProvider({ children }) {
+      const [theme, setTheme] = useState("light");
+
+      const toggleTheme = () => {
+        setTheme(prev => prev === "light" ? "dark" : "light");
+      };
+
+      return (
+        <ThemeContext.Provider value={{ theme, toggleTheme }}>
+          {children}
+        </ThemeContext.Provider>
+      );
+    }
+
+    // Themed Component
+    function ThemedBox() {
+      const { theme } = useContext(ThemeContext);
+      return (
+        <div className={`box ${theme}`}>
+          <h2>This is a {theme} themed box.</h2>
+        </div>
+      );
+    }
+
+    // App Component
+    function App() {
+      const { theme, toggleTheme } = useContext(ThemeContext);
+
+      return (
+        <div>
+          <h1>🌗 Theme Toggle App</h1>
+          <button onClick={toggleTheme}>
+            Switch to {theme === "light" ? "Dark" : "Light"} Mode
+          </button>
+
+          <ThemedBox />
+        </div>
+      );
+    }
+
+    // Render
+    const root = ReactDOM.createRoot(document.getElementById("root"));
+    root.render(
+      <ThemeProvider>
+        <App />
+      </ThemeProvider>
+    );
+  </script>
+</body>
+</html>
